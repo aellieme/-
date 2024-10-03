@@ -5,11 +5,6 @@ import matplotlib.pyplot as plt
 import openpyxl
 import numpy as np
 
-#from номер4_1 import probability_of_edge
-
-
-
-
 def remove_string_from_list(edges2, index):
     to_remove = []
     for edge in edges2:
@@ -18,13 +13,11 @@ def remove_string_from_list(edges2, index):
             to_remove.append(edge)
     for item in to_remove:
         edges2.remove(item)
-        # print('Строка ', item, ' была удалена из списка')  # Если хочется проверить какие строки удалились:
 
 
 def individual_is_ok(individual):
     edges2 = list(edges)
     one_indices = [i for i, val in enumerate(individual) if val == '1']
-    # print('Для особи', individual, 'индексы единиц равны:', *one_indices)
     for index in one_indices:
         remove_string_from_list(edges2, index)
     if not edges2:
@@ -35,7 +28,7 @@ def individual_is_ok(individual):
 
 
 def find_functions(one_indices):
-    F = len(one_indices)  # целевая функция
+    F = len(one_indices) 
     Fitness_Function = (10 * n) / (1 + F)
     return F, Fitness_Function
 
@@ -49,7 +42,6 @@ def decline_fitness(n):
 def change_individual(individual, edges):
     accemptability = False
     while accemptability != True:
-        #null_indices = [i for i, val in enumerate(individual) if val == '0']
         null_indices = np.array([i for i, val in enumerate(individual) if val == '0'])
         change_index = random.choice(null_indices)
         individual = individual[:change_index] + '1' + individual[change_index + 1:]
@@ -66,16 +58,12 @@ def usefull(population, edges):
     for individual in population:
         accemptability, edges2, one_indices = individual_is_ok(individual)
         if accemptability == True:
-            # print('Особь', individual,' является допустимой')
             F, Fitness_Function = find_functions(one_indices)
-            # print('Целевая функция =', F, 'Функция приспособленности =', Fitness_Function)
         else:
             accemptability = False
-            # print('Особь ', individual,'не является допустимой', 'не покрыты рёбра:', *edges2)
             choice = random.randint(0, 1)
             if choice == 0:
                 F, Fitness_Function = decline_fitness(n)
-                # print('для этой особи целевая ф-я и ф-я приспособленности равны соответственно: ',F, Fitness_Function)
             if choice == 1:
                 F, Fitness_Function = change_individual(individual, edges)
         FitnessF.append(Fitness_Function)
@@ -93,18 +81,17 @@ def generate_children(population, chance):
 
         i = random.randint(0, 9)  # Выбор случайной позиции i от 0 до 8
 
-        # print("Родители:", parent1, parent2)
         child1 = parent1[:i + 1] + parent2[i + 1:]  # Формирование первого потомка
         child2 = parent2[:i + 1] + parent1[i + 1:]  # Формирование второго потомка
 
-        # мутация - 1, 0 - без изменений # Мутация для child1
+
         mutation1 = random.choices((0, 1), weights=[0.4, chance])[0]
         if mutation1 == 1:
             index = random.randint(0, n - 1)
             new_numb = '1' if child1[index] == '0' else '0'
             child1 = child1[:index] + new_numb + child1[index + 1:]
 
-        # Мутация для child2
+
         mutation2 = random.choices((0, 1), weights=[0.4, chance])[0]
         if mutation2 == 1:
             index = random.randint(0, n - 1)
@@ -127,7 +114,6 @@ def champion(parents_and_children, p_and_ch_FitnessF):
     else:
         new_population.append(parents_and_children[max_index])
         new_FitnessF.append(max_fitness)
-    #F_champ=((10*n)/(new_FitnessF[0]))-1
     value_one=0
     for i in new_population[0]:
         if i=='1':
@@ -141,8 +127,6 @@ def proportional_selection(parents_and_children, n, p_an_ch_Fitness_F, new_Fitne
     n = min(n, len(parents_and_children))
 
     old_list = list(zip(parents_and_children, p_an_ch_Fitness_F))
-    # print('Все особи и их приспособленности', *old_list)
-
     population_list = [(new_population[0], new_FitnessF[0])]
     print("Все особи к отбору:", parents_and_children, p_an_ch_Fitness_F, "Лучшая особь :", new_population[0])
 
@@ -166,24 +150,17 @@ def proportional_selection(parents_and_children, n, p_an_ch_Fitness_F, new_Fitne
     return new_population, new_FitnessF
 
 
-# main
 
-#n = int(input('Введите количество вершин в графе'))
-n=25
-probability_of_edge=0.8
 
-#probability_of_edge =float(input('Введите вероятность существования ребра между вершинами : '))
+n = int(input('Введите количество вершин в графе'))
+probability_of_edge =float(input('Введите вероятность существования ребра между вершинами : '))
 p = int(n * (n - 1) / 2 * probability_of_edge)  # Вычисляем количество рёбер по вероятности
 N = int(math.log(n) * 5)
-#k = int(input('Введите количество прогонов'))
-
-k=600
-chance=0.6
-#chance = float(input('Введите вероятность мутации'))
+k = int(input('Введите количество прогонов'))
+chance = float(input('Введите вероятность мутации'))
 
 Start = time.time()  # начало подсчета времени работы
 
-# создаем  списки
 population = []
 FitnessF = []
 new_population = []
@@ -196,35 +173,34 @@ x = []
 wb = openpyxl.load_workbook('edges.xlsx')
 sheet = wb.active
 
-# считывание графа
+
 for row in sheet.iter_rows(values_only=True, min_row=1, max_row=p, min_col=1, max_col=2):
     num1, num2 = row
     edges.append(f'{num1} {num2}')
 
-for line in edges:  # Если хочется вывести список ребер графа для проверки
+for line in edges: 
     print(line)
 
-# создаем  списки
+
 population = []
 FitnessF = []
 new_population = []
 new_FitnessF = []
 
-# генерация начальной популяции
+
 for i in range(N):
     new_str = ''
     for j in range(n):
         new_str += str(random.choice([0, 1]))
     population.append(new_str)
 print("Начальная популяция:", population)
-print("_____________________________________")
+
 
 tmp = 0  # счетчик номера поколения
 
 for i in range(k + 1):
     if tmp == 0:  # вычисление допустимости и функции приспособленности для каждой особи поколения Р0
         population, FitnessF = usefull(population, edges)
-    print('-------------------------------------------------------------------------')
     x.append(tmp)
     print('Популяция P', tmp, ':', *list(zip(population, FitnessF)))
     tmp += 1
