@@ -26,12 +26,12 @@ for edge in edges:
     print(edge)
 
 
-# Создаем Excel
+# Создаем таблицу Excel
 wb = openpyxl.Workbook()
 sheet = wb.active
 
 
-# Записываем данные в книгу
+# Записываем данные в таблицу
 for i, line in enumerate(edges):
     num1, num2 = line.split()
     sheet.cell(row=i+1, column=1, value=int(num1)) #строка, column-столбец, значение
